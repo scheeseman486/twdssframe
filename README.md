@@ -42,6 +42,9 @@ Set `RestoreBindings=1` under `[FrameGrip]` in `TWD/Binaries/Win64/TWDFrameGrip.
 
 The mod backs up the original manifest and any existing Frame default before changing them. It refuses to overwrite configuration changed since its last update.
 
+## AI Notice
+Yep.
+
 [Build from source](docs/build.md) · [Settings and logs](docs/runtime-test.md) · [Implementation notes](docs/native-grip-trace.md)
 
 Project code is [MIT licensed](LICENSE). Dependencies retain their [own licenses](third_party/README.md).
