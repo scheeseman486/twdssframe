@@ -1,0 +1,290 @@
+[
+  {
+    "name": "ADS",
+    "action": "ADS",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "CrouchHold",
+    "action": "CrouchHold",
+    "type": "boolean",
+    "context": "VR"
+  },
+  {
+    "name": "DecEditOffsetPitch",
+    "action": "DecEditOffsetPitch",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "DecEditOffsetRoll",
+    "action": "DecEditOffsetRoll",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "DecEditOffsetX",
+    "action": "DecEditOffsetX",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "DecEditOffsetY",
+    "action": "DecEditOffsetY",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "DecEditOffsetYaw",
+    "action": "DecEditOffsetYaw",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "DecEditOffsetZ",
+    "action": "DecEditOffsetZ",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "DisplayCurrentEdit",
+    "action": "DisplayCurrentEdit",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "EquipConsumable1",
+    "action": "EquipConsumable1",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "EquipConsumable2",
+    "action": "EquipConsumable2",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "EquipLarge",
+    "action": "EquipLarge",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "EquipSmall",
+    "action": "EquipSmall",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "GrabWorld",
+    "action": "GrabWorld",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "IncEditOffsetPitch",
+    "action": "IncEditOffsetPitch",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "IncEditOffsetRoll",
+    "action": "IncEditOffsetRoll",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "IncEditOffsetX",
+    "action": "IncEditOffsetX",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "IncEditOffsetY",
+    "action": "IncEditOffsetY",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "IncEditOffsetYaw",
+    "action": "IncEditOffsetYaw",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "IncEditOffsetZ",
+    "action": "IncEditOffsetZ",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "Interact",
+    "action": "Interact",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "InventoryBackpack",
+    "action": "InventoryBackpack",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "InventoryFlashlight",
+    "action": "InventoryFlashlight",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "InventoryNotebook",
+    "action": "InventoryNotebook",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRInteractCancel",
+    "action": "NonVRInteractCancel",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRInteractConsume",
+    "action": "NonVRInteractConsume",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRInteractDrop",
+    "action": "NonVRInteractDrop",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRInteractInteract",
+    "action": "NonVRInteractInteract",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRInteractPageLeft",
+    "action": "NonVRInteractPageLeft",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRInteractPageRight",
+    "action": "NonVRInteractPageRight",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRInteractScrap",
+    "action": "NonVRInteractScrap",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRInteractStore",
+    "action": "NonVRInteractStore",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "NonVRPause",
+    "action": "NonVRPause",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "PrimaryAction",
+    "action": "PrimaryAction",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "Reload",
+    "action": "Reload",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "SecondaryAction",
+    "action": "SecondaryAction",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "SprintHold",
+    "action": "SprintHold",
+    "type": "boolean",
+    "context": "VR"
+  },
+  {
+    "name": "StopEditing",
+    "action": "StopEditing",
+    "type": "boolean",
+    "context": "developer"
+  },
+  {
+    "name": "Struggle",
+    "action": "Struggle",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "UINavDown",
+    "action": "UINavDown",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "UINavLeft",
+    "action": "UINavLeft",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "UINavRight",
+    "action": "UINavRight",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "UINavUp",
+    "action": "UINavUp",
+    "type": "boolean",
+    "context": "context-dependent"
+  },
+  {
+    "name": "SprintHoldMirror",
+    "action": "SprintHoldMirror",
+    "type": "boolean",
+    "context": "VR alternate controls"
+  },
+  {
+    "name": "CrouchHoldMirror",
+    "action": "CrouchHoldMirror",
+    "type": "boolean",
+    "context": "VR alternate controls"
+  },
+  {
+    "name": "TouchMovementActiveMirror",
+    "action": "TouchMovementActiveMirror",
+    "type": "boolean",
+    "context": "VR alternate controls"
+  },
+  {
+    "name": "TurnAxisLeftMirror",
+    "action": "TurnAxisLeftMirror",
+    "type": "boolean",
+    "context": "VR alternate controls"
+  },
+  {
+    "name": "TurnAxisRightMirror",
+    "action": "TurnAxisRightMirror",
+    "type": "boolean",
+    "context": "VR alternate controls"
+  }
+]

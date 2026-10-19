@@ -1,0 +1,8 @@
+paths.local.json
+artifacts/
+build/
+__pycache__/
+*.pyc
+.agents/
+.codex/
+.aws/
