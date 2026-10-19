@@ -4,6 +4,8 @@ Steam Frame controller support using the game's existing Index input behavior. R
 
 ## Install
 
+Download the install ZIP from the [latest release](https://github.com/scheeseman486/twdssframe/releases/latest), then:
+
 1. In Steam, open **Properties > Installed Files > Browse** for the game.
 2. Extract the release ZIP into that folder.
 3. Start the game through Steam with native Frame controller identity selected.

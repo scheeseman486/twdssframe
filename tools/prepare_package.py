@@ -10,7 +10,7 @@ import subprocess
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.4.0'
+VERSION = '0.420.69'
 INSTALL = '''TWD Saints & Sinners: Steam Frame support
 
 1. In Steam, open the game's Properties > Installed Files > Browse.

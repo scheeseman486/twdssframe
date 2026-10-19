@@ -310,7 +310,7 @@ extern "C" __declspec(dllexport) void InitializeASI() {
     GetModuleFileNameW(nullptr,exe_path,32768);
     wchar_t* basename=wcsrchr(exe_path,L'\\');
     basename=basename?basename+1:exe_path;
-    log_message("SESSION_START version=0.4.0 pid=%lu patch_enabled=%u index_game_mode=%u full_actions=%u openvr_identity=unchanged runtime_models=untouched",GetCurrentProcessId(),patch_enabled,index_game_mode,full_actions);
+    log_message("SESSION_START version=0.420.69 pid=%lu patch_enabled=%u index_game_mode=%u full_actions=%u openvr_identity=unchanged runtime_models=untouched",GetCurrentProcessId(),patch_enabled,index_game_mode,full_actions);
     if (_wcsicmp(basename,L"TWD-Win64-Shipping.exe")) {
         log_message("REFUSED unexpected process name");status=1;return;
     }
