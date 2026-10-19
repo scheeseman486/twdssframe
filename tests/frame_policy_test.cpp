@@ -23,5 +23,10 @@ int main() {
     assert(!use_index_game_mode(true,true,true,false));
     assert(!use_index_game_mode(true,false,true,true));
     assert(!use_index_game_mode(true,false,true,false));
+    assert(use_registered_frame_mode(true,false,false)); // Known Frame, no assigned hands yet.
+    assert(use_registered_frame_mode(false,true,false)); // Temporary disconnect after verification.
+    assert(!use_registered_frame_mode(false,false,false)); // No Frame evidence.
+    assert(!use_registered_frame_mode(true,false,true)); // Mixed connected controllers.
+    assert(!use_registered_frame_mode(false,true,true)); // A new non-Frame controller still wins.
     puts("Frame identity gate, local selection, and game-wide Index mode gate passed.");
 }

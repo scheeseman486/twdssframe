@@ -1,20 +1,24 @@
 # TWD Saints & Sinners: Frame support
 
-A small native mod that enables Steam Frame controllers using the game's existing Index support. Frame keeps its real SteamVR identity. The mod restores grabbing, enables Index input behavior and exposes additional game actions for rebinding.
-
-Tested through Steam/Proton: grabbing and releasing with both hands, movement, turning, crouch, sprint toggle, hold sprint, hold crouch and Index help diagrams. Windows has not been tested.
+Steam Frame controller support using the game's existing Index input behavior. Restores grabbing, movement and sprint, and exposes additional actions for rebinding. Frame keeps its real SteamVR identity.
 
 ## Install
 
-Supports Steam build **10808074** only. Other executable versions are refused. Close the game before installing.
+1. In Steam, open **Properties > Installed Files > Browse** for the game.
+2. Extract the release ZIP into that folder.
+3. Start the game through Steam with native Frame controller identity selected.
 
-1. Copy `paths.example.json` to `paths.local.json` and set the game and SteamVR folders.
-2. Build using the commands below, then run `python3 tools/prepare_package.py`.
-3. Run `python3 tools/install_test.py install`. It backs up the original manifest and refuses to overwrite existing mods.
-4. On Proton, add `WINEDLLOVERRIDES="winmm=n,b" %command%` to the game's Steam launch options. If using gamescope, use `WINEDLLOVERRIDES="winmm=n,b" gamescope -- %command%`.
-5. Start through Steam with both controllers awake and their native Frame identity selected.
+The mod supplies its own bindings automatically. If a personal/community layout is selected, choose **Default** in SteamVR controller bindings.
 
-**TWD Saints & Sinners - Frame** is registered as the default layout for Frame controllers. If SteamVR has a personal or community binding selected, choose **Default** once. Personal bindings remain editable and take precedence over later default updates.
+**Linux/Proton only:** set Steam launch options to:
+
+```text
+WINEDLLOVERRIDES="winmm=n,b" %command%
+```
+
+If using gamescope (I've found it helps with stability, YMMV), keep it before `%command%`: `WINEDLLOVERRIDES="winmm=n,b" gamescope -- %command%`.
+
+Supports Steam build **10808074**. Do not overwrite an existing `winmm.dll` from another mod. Windows runtime testing is pending, let me know how it goes.
 
 ## Default controls
 
@@ -23,39 +27,19 @@ Supports Steam build **10808074** only. Other executable versions are refused. C
 | Left stick / click | Move / sprint toggle |
 | Right stick left or right / click | Turn / reset HMD |
 | Right stick down or right B | Crouch toggle |
-| Grips | Grab and release |
-| Triggers | Primary interaction |
+| Grips / triggers | Grab and release / primary interaction |
 | Bumpers, left D-pad down or right A | Secondary interaction |
 | Left D-pad left or right X | Dialogue selection |
 | Left View or right Menu | Pause |
 
-Right Y, left D-pad up and left D-pad right are unassigned. Hold sprint and hold crouch remain available in SteamVR's binding editor. All public Frame controls can be rebound; SteamVR reserves some system inputs. Additional actions depend on the handlers the current game context provides. See the [action catalog](docs/action-catalog.md).
+Right Y, left D-pad up and left D-pad right are unassigned. Hold sprint and hold crouch remain available for rebinding. Additional actions depend on handlers provided by the current game context. See the [action catalog](docs/action-catalog.md).
 
-## Build
+## Remove
 
-Requires CMake, Ninja and the MinGW Windows x64 C++ compiler. No Unreal Editor or runtime mod framework is required.
+Set `RestoreBindings=1` under `[FrameGrip]` in `TWD/Binaries/Win64/TWDFrameGrip.ini`. Launch once through Steam, then close the game. Delete `TWDFrameGrip.asi`, `TWDFrameGrip.ini`, `winmm.dll` and `winmm.ini` from that folder. On Proton, remove the `winmm` launch setting too.
 
-```sh
-cmake -S . -B build/windows -G Ninja \
-  -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-x64.cmake -DCMAKE_BUILD_TYPE=Release
-cmake --build build/windows
-```
+The mod backs up the original manifest and any existing Frame default before changing them. It refuses to overwrite configuration changed since its last update.
 
-Policy checks run natively on Linux:
+[Build from source](docs/build.md) · [Settings and logs](docs/runtime-test.md) · [Implementation notes](docs/native-grip-trace.md)
 
-```sh
-g++ -std=c++17 -Wall -Wextra -Isrc tests/frame_policy_test.cpp -o build/frame_policy_test
-build/frame_policy_test
-```
-
-The ASI module is about 96 KB. [Ultimate ASI Loader](third_party/README.md) provides the separate `winmm.dll` bootstrap. Package preparation reads the installed game's action manifest and SteamVR Frame profile; game files, logs and local paths stay outside Git.
-
-## Update and remove
-
-After regenerating the package, use `python3 tools/install_test.py update-binding` for layout changes. Choose Default again in SteamVR to reload it. For module updates, close the game and use `python3 tools/install_test.py update-mod`.
-
-To remove, close the game and run `python3 tools/install_test.py restore`, then remove the launch option's `WINEDLLOVERRIDES` setting. If you used the optional registry override tool, run `python3 tools/proton_override.py restore` too. Keep `artifacts/install-backup` until removal is complete.
-
-[Runtime settings and logs](docs/runtime-test.md) · [Native implementation notes](docs/native-grip-trace.md)
-
-Project code is [MIT licensed](LICENSE). Dependencies retain their [own licenses](third_party/README.md). No game binaries or assets are included.
+Project code is [MIT licensed](LICENSE). Dependencies retain their [own licenses](third_party/README.md).

@@ -11,6 +11,7 @@
 #include "openvr.h"
 #include "frame_policy.h"
 #include "action_bridge.h"
+#include "bindings.h"
 
 namespace {
 constexpr char ExpectedSha[] = "67615a629b1fd8b464b1d087166d91ba47b9427cd311ce665ca16eecc50df576";
@@ -31,7 +32,8 @@ volatile LONG initialized = 0, status = 0;
 bool patch_enabled = true, index_game_mode = true, full_actions = true;
 SRWLOCK identity_lock = SRWLOCK_INIT;
 ULONGLONG identity_checked = 0;
-bool cached_frame_system = false;
+bool cached_frame_system = false, frame_identity_seen = false, identity_logged = false;
+volatile LONG classifier_samples = 0;
 unsigned log_lines = 0;
 
 struct InputScope {
@@ -128,32 +130,40 @@ bool hash_executable(char* hex) {
 
 struct Device {
     bool frame = false;
+    bool known_frame = false;
     bool connected = false;
     uint32_t index = vr::k_unTrackedDeviceIndexInvalid;
     char type[256] = {}, model[256] = {}, render[256] = {};
 };
 
-Device inspect_device(unsigned selector) {
+Device inspect_index(vr::IVRSystem* system, uint32_t index) {
     Device result;
-    // This is the IVRSystem_020 pointer initialized by the game's SteamVR plugin.
-    // Use the matching 1.5.17 ABI and never initialize a second VR client here.
-    vr::IVRSystem* system = *reinterpret_cast<vr::IVRSystem**>(image_base+VrSystemGlobalRva);
-    if (!system || selector > 1) return result;
-    auto role = selector == 0 ? vr::TrackedControllerRole_LeftHand : vr::TrackedControllerRole_RightHand;
-    result.index = system->GetTrackedDeviceIndexForControllerRole(role);
-    if (result.index == vr::k_unTrackedDeviceIndexInvalid) return result;
-    const bool connected = system->IsTrackedDeviceConnected(result.index);
-    result.connected = connected;
-    const bool controller = system->GetTrackedDeviceClass(result.index) == vr::TrackedDeviceClass_Controller;
-    const bool correct_role = system->GetControllerRoleForTrackedDeviceIndex(result.index) == role;
+    result.index=index;
+    if (!system || index >= vr::k_unMaxTrackedDeviceCount) return result;
+    result.connected=system->IsTrackedDeviceConnected(index);
+    const bool controller=system->GetTrackedDeviceClass(index)==vr::TrackedDeviceClass_Controller;
+    if (!controller) return result;
     vr::ETrackedPropertyError error;
-    system->GetStringTrackedDeviceProperty(result.index,vr::Prop_ControllerType_String,result.type,sizeof(result.type),&error);
+    system->GetStringTrackedDeviceProperty(index,vr::Prop_ControllerType_String,result.type,sizeof(result.type),&error);
     if (error != vr::TrackedProp_Success) result.type[0] = 0;
-    system->GetStringTrackedDeviceProperty(result.index,vr::Prop_ModelNumber_String,result.model,sizeof(result.model),&error);
+    system->GetStringTrackedDeviceProperty(index,vr::Prop_ModelNumber_String,result.model,sizeof(result.model),&error);
     if (error != vr::TrackedProp_Success) result.model[0] = 0;
-    system->GetStringTrackedDeviceProperty(result.index,vr::Prop_RenderModelName_String,result.render,sizeof(result.render),&error);
+    system->GetStringTrackedDeviceProperty(index,vr::Prop_RenderModelName_String,result.render,sizeof(result.render),&error);
     if (error != vr::TrackedProp_Success) result.render[0] = 0;
-    result.frame = correct_role && framegrip::is_frame_device(connected,controller,result.type,result.model,result.render);
+    // SteamVR retains genuine device identities before role assignment and while
+    // controllers sleep. Identity evidence does not require a connected hand.
+    result.known_frame=framegrip::is_frame_device(true,controller,result.type,result.model,result.render);
+    result.frame=result.connected && result.known_frame;
+    return result;
+}
+
+Device inspect_device(unsigned selector) {
+    vr::IVRSystem* system = *reinterpret_cast<vr::IVRSystem**>(image_base+VrSystemGlobalRva);
+    if (!system || selector > 1) return Device{};
+    const auto role=selector==0?vr::TrackedControllerRole_LeftHand:vr::TrackedControllerRole_RightHand;
+    auto result=inspect_index(system,system->GetTrackedDeviceIndexForControllerRole(role));
+    if (result.index < vr::k_unMaxTrackedDeviceCount && system->GetControllerRoleForTrackedDeviceIndex(result.index)!=role)
+        result.frame=false;
     return result;
 }
 
@@ -161,14 +171,24 @@ bool frame_system_active() {
     const ULONGLONG now = GetTickCount64();
     AcquireSRWLockExclusive(&identity_lock);
     if (!identity_checked || now-identity_checked >= 250) {
-        const Device left=inspect_device(0), right=inspect_device(1);
-        const bool active=framegrip::use_index_game_mode(left.connected,left.frame,right.connected,right.frame);
-        if (active != cached_frame_system) {
-            log_message("GAME_CONTROLLER_MODE frame=%u selected=%s openvr_identity=unchanged left_type=\"%s\" right_type=\"%s\"",
-                active,active?"Index":"original",left.type,right.type);
+        auto system=*reinterpret_cast<vr::IVRSystem**>(image_base+VrSystemGlobalRva);
+        unsigned registered_frame=0, connected_non_frame=0;
+        if (system) for (uint32_t index=0;index<vr::k_unMaxTrackedDeviceCount;++index) {
+            if (system->GetTrackedDeviceClass(index)!=vr::TrackedDeviceClass_Controller) continue;
+            const auto device=inspect_index(system,index);
+            registered_frame+=device.known_frame;
+            connected_non_frame+=device.connected && !device.known_frame;
+        }
+        const bool active=system && framegrip::use_registered_frame_mode(registered_frame!=0,frame_identity_seen,connected_non_frame!=0);
+        frame_identity_seen=frame_identity_seen || registered_frame!=0;
+        if (!identity_logged || active != cached_frame_system) {
+            log_message("GAME_CONTROLLER_MODE frame=%u selected=%s openvr_identity=unchanged registered_frame=%u connected_non_frame=%u frame_seen=%u system_ready=%u",
+                active,active?"Index":"original",registered_frame,connected_non_frame,frame_identity_seen,system!=nullptr);
+            identity_logged=true;
         }
         cached_frame_system=active;
-        identity_checked=now;
+        // Retry as soon as the game initializes its VR system.
+        identity_checked=system?now:0;
     }
     const bool active=cached_frame_system;
     ReleaseSRWLockExclusive(&identity_lock);
@@ -196,6 +216,9 @@ uint8_t hooked_classifier() {
     const bool local = input_scope.hand && caller == image_base+InputCallerReturnRva;
     const bool game_index = patch_enabled && index_game_mode && frame_system_active();
     const uint8_t selected = game_index ? 4 : framegrip::select_input_type(original,patch_enabled,input_scope.frame,local);
+    const LONG sample=InterlockedIncrement(&classifier_samples);
+    if (sample<=16) log_message("CONTROLLER_CLASSIFY sample=%ld caller_rva=0x%llx original_enum=%u selected_enum=%u frame_mode=%u",
+        sample,static_cast<unsigned long long>(caller-image_base),original,selected,game_index);
     if (local) {
         input_scope.seen=true;
         input_scope.index_selected=selected==4;
@@ -211,10 +234,11 @@ void hooked_setup(void* hand, void* input_component) {
     const Device device = inspect_device(selector);
     log_message("HAND_SETUP hand=%p hand_selector=%u device=%u frame=%u type=\"%s\" model=\"%s\" render_model=\"%s\" input=%p",
         hand,selector,device.index,device.frame,device.type,device.model,device.render,input_component);
-    register_hand(hand,selector,device.frame);
+    const bool frame_hand=device.frame || (selector<2 && !device.connected && patch_enabled && index_game_mode && frame_system_active());
+    register_hand(hand,selector,frame_hand);
     const InputScope prior = input_scope;
     input_scope = InputScope{};
-    input_scope.hand=hand;input_scope.frame=device.frame;
+    input_scope.hand=hand;input_scope.frame=frame_hand;
     original_setup(hand,input_component);
     log_message("HAND_SETUP_DONE hand=%p classifier_seen=%u index_axis=%u press=%.4f release=%.4f",
         hand,input_scope.seen,input_scope.index_selected,field<float>(hand,0xaf8),field<float>(hand,0xafc));
@@ -286,7 +310,7 @@ extern "C" __declspec(dllexport) void InitializeASI() {
     GetModuleFileNameW(nullptr,exe_path,32768);
     wchar_t* basename=wcsrchr(exe_path,L'\\');
     basename=basename?basename+1:exe_path;
-    log_message("SESSION_START version=0.3.0 pid=%lu patch_enabled=%u index_game_mode=%u full_actions=%u openvr_identity=unchanged runtime_models=untouched",GetCurrentProcessId(),patch_enabled,index_game_mode,full_actions);
+    log_message("SESSION_START version=0.4.0 pid=%lu patch_enabled=%u index_game_mode=%u full_actions=%u openvr_identity=unchanged runtime_models=untouched",GetCurrentProcessId(),patch_enabled,index_game_mode,full_actions);
     if (_wcsicmp(basename,L"TWD-Win64-Shipping.exe")) {
         log_message("REFUSED unexpected process name");status=1;return;
     }
@@ -297,6 +321,13 @@ extern "C" __declspec(dllexport) void InitializeASI() {
     image_base=reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr));
     log_message("BUILD_VERIFIED sha256=%s image_base=%p",sha,reinterpret_cast<void*>(image_base));
     if (!verify_memory()) {log_message("REFUSED runtime code bytes differ; no hooks installed");status=3;return;}
+    const bool restore_bindings=GetPrivateProfileIntW(L"FrameGrip",L"RestoreBindings",0,ini_path)!=0;
+    if (restore_bindings || patch_enabled) {
+        if (!framebindings::prepare(exe_path,restore_bindings)) {
+            log_message("REFUSED automatic binding setup failed; no hooks installed");status=7;return;
+        }
+        if (restore_bindings) {log_message("RESTORE_ONLY no hooks installed");status=11;return;}
+    }
     auto code=MH_Initialize();
     if (code!=MH_OK) {log_message("REFUSED MinHook init=%s",MH_StatusToString(code));status=4;return;}
     bool ok=create_hook(SetupRva,reinterpret_cast<void*>(hooked_setup),reinterpret_cast<void**>(&original_setup)) &&

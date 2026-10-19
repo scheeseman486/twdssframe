@@ -1,0 +1,226 @@
+{
+  "action_manifest_version": 0,
+  "app_key": "steam.app.916840",
+  "category": "steamvr_input",
+  "controller_type": "frame_controller",
+  "name": "TWD Saints & Sinners - Frame",
+  "description": "Native Frame controls with Index game behavior and fully editable game actions.",
+  "options": {},
+  "alias_info": {},
+  "simulated_actions": [],
+  "bindings": {
+    "/actions/main": {
+      "sources": [
+        {
+          "path": "/user/hand/left/input/grip",
+          "mode": "trigger",
+          "inputs": {
+            "pull": {
+              "output": "/actions/main/in/KnucklesLeftGrip axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/trigger",
+          "mode": "trigger",
+          "inputs": {
+            "pull": {
+              "output": "/actions/main/in/LeftInteract axis"
+            },
+            "touch": {
+              "output": "/actions/main/in/LeftIndexPointing axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/bumper",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/LeftInteractSecondary axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/grip",
+          "mode": "trigger",
+          "inputs": {
+            "pull": {
+              "output": "/actions/main/in/KnucklesRightGrip axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/trigger",
+          "mode": "trigger",
+          "inputs": {
+            "pull": {
+              "output": "/actions/main/in/RightInteract axis"
+            },
+            "touch": {
+              "output": "/actions/main/in/RightIndexPointing axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/bumper",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/RightInteractSecondary axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/thumbstick",
+          "mode": "joystick",
+          "inputs": {
+            "position": {
+              "output": "/actions/main/in/MoveForward_X,MoveForward_Y X Y_axis2d"
+            },
+            "click": {
+              "output": "/actions/main/in/SprintToggle"
+            }
+          },
+          "parameters": {
+            "invert": "y"
+          }
+        },
+        {
+          "path": "/user/hand/right/input/thumbstick",
+          "mode": "joystick",
+          "inputs": {
+            "position": {
+              "output": "/actions/main/in/ConfigurableTurnAxis_X,ConfigurableTurnAxis_Y X Y_axis2d"
+            },
+            "click": {
+              "output": "/actions/main/in/ResetHMD"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/thumbstick",
+          "mode": "dpad",
+          "inputs": {
+            "south": {
+              "output": "/actions/main/in/CrouchToggle"
+            }
+          },
+          "parameters": {
+            "sub_mode": "touch",
+            "deadzone_pct": "50",
+            "overlap_pct": "0"
+          }
+        },
+        {
+          "path": "/user/hand/left/input/view",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/Pause"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/menu",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/Pause"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/dpad_left",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/SelectDialogue"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/x",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/SelectDialogue"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/dpad_down",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/LeftInteractSecondary axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/a",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/RightInteractSecondary axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/b",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/CrouchToggle"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/dpad_right",
+          "mode": "button",
+          "inputs": {}
+        },
+        {
+          "path": "/user/hand/left/input/dpad_up",
+          "mode": "button",
+          "inputs": {}
+        },
+        {
+          "path": "/user/hand/right/input/y",
+          "mode": "button",
+          "inputs": {}
+        }
+      ],
+      "poses": [
+        {
+          "path": "/user/hand/left/pose/raw",
+          "output": "/actions/main/in/controllerleft"
+        },
+        {
+          "path": "/user/hand/right/pose/raw",
+          "output": "/actions/main/in/controllerright"
+        }
+      ],
+      "haptics": [
+        {
+          "path": "/user/hand/left/output/haptic",
+          "output": "/actions/main/out/vibrateleft"
+        },
+        {
+          "path": "/user/hand/right/output/haptic",
+          "output": "/actions/main/out/vibrateright"
+        }
+      ],
+      "skeleton": [
+        {
+          "path": "/user/hand/left/input/skeleton/left",
+          "output": "/actions/main/in/skeletonleft"
+        },
+        {
+          "path": "/user/hand/right/input/skeleton/right",
+          "output": "/actions/main/in/skeletonright"
+        }
+      ]
+    }
+  }
+}

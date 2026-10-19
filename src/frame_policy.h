@@ -25,4 +25,10 @@ inline bool use_index_game_mode(bool left_connected, bool left_frame,
     return (left_frame || right_frame) &&
            (!left_connected || left_frame) && (!right_connected || right_frame);
 }
+// Registration survives hand-role assignment and ordinary controller sleep.
+inline bool use_registered_frame_mode(bool registered_frame, bool frame_seen,
+                                      bool connected_non_frame) {
+    return (registered_frame || frame_seen) && !connected_non_frame;
+}
+
 }

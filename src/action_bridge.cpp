@@ -67,7 +67,7 @@ struct ExtraAction {
     Callback callback[2] = {};
 };
 ExtraAction actions[]={
-#include "additional_actions.inc"
+#include <additional_actions.inc>
 };
 bool names_ready=false;
 ULONGLONG last_poll=0;

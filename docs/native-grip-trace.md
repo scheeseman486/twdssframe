@@ -24,7 +24,7 @@ Index hand setup selects `KnucklesLeftGrip` or `KnucklesRightGrip`. Both ordinar
 
 A scoped override was sufficient for grabbing. Full Index classification was subsequently required for the intended sprint behavior and help diagrams. Analog turning also has a Vive-specific gate at `0x1d18e40`. The classifier has 32 verified direct callers, so the full override deliberately applies game-wide.
 
-The gate checks connected controllers against Frame type, model and render-model properties. Observed values were `frame_controller`, `Roy_Left`/`Roy_Right`, and `{frame_controller}frame_controller_left`/`frame_controller_right`. It rejects emulated identities and mixed controller sets. Identity is cached for up to 250 ms. No OpenVR property is spoofed.
+The gate checks connected controllers against Frame type, model and render-model properties. Observed values were `frame_controller`, `Roy_Left`/`Roy_Right`, and `{frame_controller}frame_controller_left`/`frame_controller_right`. It scans registered controller identities independently of hand roles, including sleeping devices, so the initial setup can select Index before hand roles appear. The verified Frame mode persists across temporary disconnects. Connected non-Frame controllers prevent the override. Identity is cached for up to 250 ms. No OpenVR property is spoofed.
 
 ## Additional action bridge
 
